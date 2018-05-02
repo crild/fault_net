@@ -4,7 +4,6 @@ import math
 import numpy as np
 
 from fault_net_func.prediction import *
-from fault_net_func.fast import *
 
 from matplotlib import gridspec
 
