@@ -123,6 +123,37 @@ def save_image(kept_filters, keras_model, name = None):
         imsave(name, stitched_filters)
         print('file name is: ',name)
 
+# Format processing of image
+def form_pros(im,formatting = 'normalize',clim = np.array([0, 255])):
+    # im: image to process,
+    # formatting: convention of formatting to use
+
+    # Process the images
+    if formatting is None:
+        im2 = im
+
+    elif formatting == 'normalize':
+        # normalize tensor: center on 0., ensure std is 0.1
+        mn = im.mean()
+        stad = im.std()
+        im1 = ((im-mn)/(stad+1e-10))*0.1
+        fac = clim[1]-clim[0]
+
+        # cast to rgb value range
+        im2 = np.clip(np.clip(im1+0.5, 0, 1)*fac+clim[0],clim[0],clim[1]).astype('uint8')
+
+    elif formatting == 'RGBcast':
+        # cast to [0, 255]
+        maxima = np.amax(im)
+        minima = np.amin(im)
+        interv = maxima - minima
+        im1 = im - minima
+        im2 = (im1/interv)*(clim[1]-clim[0])+clim[0]
+
+    else:
+        print('Illegal formatting string!')
+
+    return im2
 
 
 # save the original image to disk
@@ -152,29 +183,7 @@ def save_or(img,name = None,formatting = 'normalize'):
         # Make stratigraphic upwards direction up in the image
         im = np.transpose(im,(1,0,2))
 
-        # Process the images
-        if formatting is None:
-            im2 = im
-
-        elif formatting == 'normalize':
-            # normalize tensor: center on 0., ensure std is 0.1
-            mn = im.mean()
-            stad = im.std()
-            im1 = ((im-mn)/(stad+1e-10))*0.1
-
-            # cast to rgb value range
-            im2 = np.clip(np.clip(im1+0.5, 0, 1)*255,0,255).astype('uint8')
-
-        elif formatting == 'RGBcast':
-            # cast to [0, 255]
-            maxima = np.amax(im)
-            minima = np.amin(im)
-            interv = maxima - minima
-            im1 = im - minima
-            im2 = (im1/interv)*255
-
-        else:
-            print('Illegal formatting string!')
+        im2 = form_pros(im,formatting = formatting)
 
         stitched_im[0:61,(61 + margin) * k: (61 + margin) * k + 61,:] = im2
 
