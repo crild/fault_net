@@ -7,6 +7,8 @@ from fault_net_func.data_cond import *
 from fault_net_func.segy_files import *
 from fault_net_func.feature_vis import *
 
+# Set the RNG
+np.random.seed(7)
 
 # Define some parameters
 keras_model = keras.models.load_model('F3/fault.h5')
@@ -38,7 +40,7 @@ tr_params =        {'seis_spec'   : segy_obj,
 generator = ex_create(**tr_params)
 
 # image index fram tr_adr (must beless than steps in tr_params)
-im_idx = 50
+im_idx = 9 # 3/4/9
 
 start_im, y = generator.data_generation(im_idx)
 

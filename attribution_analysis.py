@@ -1,6 +1,7 @@
 #### ------------- Test for attribution ------------
 
 # Import needed functions and modules
+import os
 import keras
 import matplotlib.pyplot as plt
 
@@ -45,10 +46,17 @@ im_idx = 9 # 3/4/9
 
 test_im, y = generator.data_generation(im_idx)
 
-save_or(test_im,name = 'images/Original_im'+str(im_idx),formatting = 'normalize')
+# Check if we need to make a new image directory
+if not os.path.exists('images/image'+str(im_idx)):
+    os.makedirs('images/image'+str(im_idx))
+
+save_or(test_im,name = 'images/image'+str(im_idx)+'/Original_im',formatting = 'normalize')
 
 ig = integrated_gradients(keras_model)
 
-save_overlay(ig,len(file_list),test_im,name='images/overlay'+str(im_idx),steps = 100)
+save_overlay(ig,len(file_list),test_im,name='images/image'+str(im_idx)+'/overlay',steps = 100, mosaic = 'rows')
 
-print('the actual label was:',y)
+
+labl = np.append(y,(np.nonzero(y)[1]*np.ones(y.shape)),axis = 0)
+np.savetxt(fname='images/image'+str(im_idx)+'/label',X = labl,fmt='%i')
+print('The actual label was:',int(labl[1,0]))
