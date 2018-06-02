@@ -14,7 +14,7 @@ from fault_net_func.feature_vis import *
 np.random.seed(7)
 
 # Define some parameters
-keras_model = keras.models.load_model('F3/fault.h5')
+keras_model = keras.models.load_model('F3/fault25epochs_tall_test.h5')
 cube_incr = 30
 segy_filename = ['F3_entire.segy']
 file_list = ['./class_addresses/multi_else_ilxl.pts','./class_addresses/f3_fault_training_locations.pts'] # list of names of class-adresses
@@ -42,7 +42,7 @@ tr_params =        {'seis_spec'   : segy_obj,
 generator = ex_create(**tr_params)
 
 # image index fram tr_adr (must beless than steps in tr_params)
-im_idx = 9 # 3/4/9
+im_idx = 1 # 3/4/9
 
 test_im, y = generator.data_generation(im_idx)
 
@@ -55,7 +55,6 @@ save_or(test_im,name = 'images/image'+str(im_idx)+'/Original_im',formatting = 'n
 ig = integrated_gradients(keras_model)
 
 save_overlay(ig,len(file_list),test_im,name='images/image'+str(im_idx)+'/overlay',steps = 100, mosaic = 'rows')
-
 
 labl = np.append(y,(np.nonzero(y)[1]*np.ones(y.shape)),axis = 0)
 np.savetxt(fname='images/image'+str(im_idx)+'/label',X = labl,fmt='%i')
