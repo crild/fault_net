@@ -61,8 +61,8 @@ def save_image(kept_filters, keras_model, name = None):
     # dimensions of the generated pictures for each filter.
     input_shape = keras_model.input_shape
     img_width = input_shape[1]
-    img_height = input_shape[2]
-    img_depth = input_shape[3]
+    img_depth = input_shape[2]
+    img_height = input_shape[3]
 
     # the filters that have the highest loss are assumed to be better-looking.
     # we will only keep the top 24 filters if we have more than 24.
@@ -104,14 +104,17 @@ def save_image(kept_filters, keras_model, name = None):
                 # slice the 3D input into 2.5D (one slice from each plane)
                 if k == 0:
                     im = np.transpose(img[30,:,:,:],(1,0,2))
+                    stp = 0
                 elif k == 1:
                     im = np.transpose(img[:,30,:,:],(1,0,2))
+                    stp = 0
                 elif k == 2:
-                    im = np.transpose(img[:,:,30,:],(1,0,2))
+                    im = np.transpose(img[:,:,62,:],(1,0,2))
+                    stp = 32
                 else:
                     print('Undefined scenario!')
 
-                stitched_filters[(img_height + margin) * j: (img_height + margin) * j + img_height,
+                stitched_filters[(img_height + margin) * j + stp: (img_height + margin) * j + img_height - stp,
                                  (img_width + margin) * (i*nk + k): (img_width + margin) * (i*nk + k) + img_width,:] = im
 
     # save the result to disk
@@ -164,7 +167,7 @@ def save_or(img,name = None,formatting = 'normalize'):
     input_channels = 3
     margin = 5
     width = 3 * 61 + (3 - 1) * margin
-    height = 61 + (1 - 1) * margin
+    height = 125 + (1 - 1) * margin
 
     stitched_im = np.zeros((height,width,input_channels))
 
@@ -173,10 +176,16 @@ def save_or(img,name = None,formatting = 'normalize'):
         # slice the 3D input into 2.5D (one slice from each plane)
         if k == 0:
             im = img[0,30,:,:,:]
+            stp = 125
+            lign = 0
         elif k == 1:
             im = img[0,:,30,:,:]
+            stp = 125
+            lign = 0
         elif k == 2:
-            im = img[0,:,:,30,:]
+            im = img[0,:,:,62,:]
+            stp = 61
+            lign = 32
         else:
             print('Undefined scenario!')
 
@@ -185,7 +194,7 @@ def save_or(img,name = None,formatting = 'normalize'):
 
         im2 = form_pros(im,formatting = formatting)
 
-        stitched_im[0:61,(61 + margin) * k: (61 + margin) * k + 61,:] = im2
+        stitched_im[lign:stp+lign,(61 + margin) * k: (61 + margin) * k + 61,:] = im2
 
     # save the result to disk
     if name is None:

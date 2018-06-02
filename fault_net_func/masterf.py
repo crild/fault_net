@@ -27,6 +27,11 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
         else:
             keras_model = None
 
+        if 'num_class' in pred_dict:
+            num_classes = pred_dict['num_class']
+        else:
+            keras_model = None
+
         # Unpack the dictionary of training parameters
         file_list           = train_dict['files']
         num_epochs          = train_dict['epochs']
@@ -52,6 +57,7 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
                             file_list = file_list,
                             cube_incr = cube_incr,
                             num_epochs = num_epochs,
+                            num_classes = num_classes,
                             num_examples = num_examples,
                             batch_size = batch_size,
                             val_split = val_split,
@@ -70,15 +76,15 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
             print('Total time elapsed during training:',train_time, ' sec.')
         elif 300 < train_time <= 60*60:
             minutes = train_time//60
-            seconds = (train_time%60)*(60/100)
+            seconds = (train_time%60)
             print('Total time elapsed during training:',minutes,' min., ',seconds,' sec.')
         elif 60*60 < train_time <= 60*60*24:
             hours = train_time//(60*60)
-            minutes = (train_time%(60*60))*(1/60)*(60/100)
+            minutes = (train_time%(60*60))*(1/60)
             print('Total time elapsed during training:',hours,' hrs., ',minutes,' min., ')
         else:
             days = train_time//(24*60*60)
-            hours = (train_time%(24*60*60))*(1/60)*((1/60))*(24/100)
+            hours = (train_time%(24*60*60))*(1/60)*((1/60))
             print('Total time elapsed during training:',days,' days, ',hours,' hrs., ')
 
 
@@ -134,19 +140,19 @@ def master(segy_filename,cube_incr,train_dict={},pred_dict={},mode = 'full'):
 
         # print to the user the total time spent training
         if pred_time <= 300:
-            print('Total time elapsed during prediction:',pred_time, ' sec.')
+            print('Total time elapsed during prediction and saving:',pred_time, ' sec.')
         elif 300 < pred_time <= 60*60:
             minutes = pred_time//60
-            seconds = (pred_time%60)*(60/100)
-            print('Total time elapsed during prediction:',minutes,' min., ',seconds,' sec.')
+            seconds = (pred_time%60)
+            print('Total time elapsed during prediction and saving:',minutes,' min., ',seconds,' sec.')
         elif 60*60 < pred_time <= 60*60*24:
             hours = pred_time//(60*60)
-            minutes = (pred_time%(60*60))*(1/60)*(60/100)
-            print('Total time elapsed during prediction:',hours,' hrs., ',minutes,' min., ')
+            minutes = (pred_time%(60*60))*(1/60)
+            print('Total time elapsed during prediction and saving:',hours,' hrs., ',minutes,' min., ')
         else:
             days = pred_time//(24*60*60)
-            hours = (pred_time%(24*60*60))*(1/60)*((1/60))*(24/100)
-            print('Total time elapsed during prediction:',days,' days, ',hours,' hrs., ')
+            hours = (pred_time%(24*60*60))*(1/60)*((1/60))
+            print('Total time elapsed during prediction and saving:',days,' days, ',hours,' hrs., ')
 
     else:
         # Make an empty variable for the prediction output

@@ -68,36 +68,46 @@ def make_model(cube_size = 65, num_channels = 1, num_classes = 2,\
     #
     #  We also use the Adam optimizer with a given learning rate (Note that this is adapted later)
     #
+    drop_weight = 0.5
+    width1 = 20
+    width2 = 6
+    #
+
     model = Sequential()
-    model.add(Conv3D(50, (5, 5, 5), padding='valid', input_shape=(cube_size,cube_size,cube_size,num_channels), strides=(4, 4, 4), \
+    model.add(Conv3D(width1, (5, 5, 5), padding='valid', input_shape=(cube_size,cube_size,2*cube_size+3,num_channels), strides=(4, 4, 4), \
                      data_format="channels_last",name = 'conv_layer1'))
     model.add(BatchNormalization())
-    model.add(SpatialDropout3D(0.2))
+    model.add(SpatialDropout3D(drop_weight))
     model.add(Activation('relu'))
 
-    model.add(Conv3D(50, (3, 3, 3), strides=(2, 2, 2), padding = 'valid',name = 'conv_layer2'))
+    model.add(Conv3D(width1, (3, 3, 3), strides=(2, 2, 2), padding = 'valid',name = 'conv_layer2'))
     model.add(BatchNormalization())
-    model.add(SpatialDropout3D(0.2))
+    model.add(SpatialDropout3D(drop_weight))
     model.add(Activation('relu'))
 
-    model.add(Conv3D(50, (3, 3, 3), strides=(2, 2, 2), padding= 'valid',name = 'conv_layer3'))
+    model.add(Conv3D(width1, (3, 3, 3), strides=(2, 2, 2), padding= 'valid',name = 'conv_layer3'))
     model.add(BatchNormalization())
-    model.add(SpatialDropout3D(0.2))
+    model.add(SpatialDropout3D(drop_weight))
     model.add(Activation('relu'))
 
-    model.add(Conv3D(50, (3, 3, 3), strides=(1, 1, 1), padding= 'valid',name = 'conv_layer4'))
+    model.add(Conv3D(width1, (3, 3, 3), strides=(1, 1, 2), padding= 'valid',name = 'conv_layer4'))
     model.add(BatchNormalization())
-    model.add(SpatialDropout3D(0.2))
+    model.add(SpatialDropout3D(drop_weight))
     model.add(Activation('relu'))
 
-    model.add(Dense(50,name = 'dense_layer1'))
+    model.add(Conv3D(width1, (1, 1, 3), strides=(1, 1, 1), padding= 'valid',name = 'conv_layer5'))
     model.add(BatchNormalization())
-    model.add(Dropout(0.2))
+    model.add(SpatialDropout3D(0.3))
     model.add(Activation('relu'))
 
-    model.add(Dense(10,name = 'attribute_layer'))
+    #model.add(Dense(50,name = 'dense_layer1'))
+    #model.add(BatchNormalization())
+    #model.add(Dropout(drop_weight))
+    #model.add(Activation('relu'))
+
+    model.add(Dense(width2,name = 'attribute_layer'))
     model.add(BatchNormalization())
-    model.add(Dropout(0.2))
+    model.add(Dropout(drop_weight))
     model.add(Activation('relu'))
 
     model.add(Dense(num_classes, name = 'pre-softmax_layer'))

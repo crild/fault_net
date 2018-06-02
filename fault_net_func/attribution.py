@@ -283,19 +283,19 @@ def save_overlay(int_grad,classes,inp_im,name=None,steps = 100, mosaic = 'cols')
         # Define some initial parameters
         margin = 5
         width = classes * 61 + (classes - 1) * margin
-        height = (2*3) * 61 + ((2*3) - 1) * margin
+        height = (2*3) * 125 + ((2*3) - 1) * margin
 
     elif mosaic == 'rows':
         # Define some initial parameters
         margin = 5
         width = (2*3) * 61 + ((2*3) - 1) * margin
-        height = (classes) * 61 + ((classes) - 1) * margin
+        height = (classes) * 125 + ((classes) - 1) * margin
 
     elif mosaic == 'rows2':
         # Define some initial parameters
         margin = 5
         width = 3 * 61 + (3 - 1) * margin
-        height = (2*classes) * 61 + ((2*classes) - 1) * margin
+        height = (2*classes) * 125 + ((2*classes) - 1) * margin
 
     else:
         print('Unknown mosaic input.')
@@ -316,10 +316,16 @@ def save_overlay(int_grad,classes,inp_im,name=None,steps = 100, mosaic = 'cols')
             # slice the 3D input into 2.5D (one slice from each plane)
             if k == 0:
                 im = output_im[0,30,:,:,:]
+                stp = 125
+                lign = 0
             elif k == 1:
                 im = output_im[0,:,30,:,:]
+                stp = 125
+                lign = 0
             elif k == 2:
-                im = output_im[0,:,:,30,:]
+                im = output_im[0,:,:,62,:]
+                stp = 61
+                lign = 32
             else:
                 print('Undefined scenario!')
 
@@ -328,13 +334,13 @@ def save_overlay(int_grad,classes,inp_im,name=None,steps = 100, mosaic = 'cols')
 
             if mosaic == 'cols':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * k:(61 + margin) * k + 61,(61 + margin) * i: (61 + margin) * i + 61,:] = im
+                stitched_im[(125 + margin) * k + lign:(125 + margin) * k + stp + lign,(61 + margin) * i: (61 + margin) * i + 61,:] = im
             elif mosaic == 'rows':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * i: (61 + margin) * (i) + 61,(61 + margin) * k:(61 + margin) * k + 61,:] = im
+                stitched_im[(125 + margin) * i + lign: (125 + margin) * (i) + stp + lign,(61 + margin) * k:(61 + margin) * k + 61,:] = im
             elif mosaic == 'rows2':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * (2*i): (61 + margin) * (2*i) + 61,(61 + margin) * k:(61 + margin) * k + 61,:] = im
+                stitched_im[(125 + margin) * (2*i) + lign: (125 + margin) * (2*i) + stp + lign,(61 + margin) * k:(61 + margin) * k + 61,:] = im
 
 
 
@@ -346,10 +352,16 @@ def save_overlay(int_grad,classes,inp_im,name=None,steps = 100, mosaic = 'cols')
             # slice the 3D input into 2.5D (one slice from each plane)
             if k == 0:
                 im = output_im[30,:,:,:]
+                stp = 125
+                lign = 0
             elif k == 1:
                 im = output_im[:,30,:,:]
+                stp = 125
+                lign = 0
             elif k == 2:
-                im = output_im[:,:,30,:]
+                im = output_im[:,:,62,:]
+                stp = 61
+                lign = 32
             else:
                 print('Undefined scenario!')
 
@@ -358,13 +370,13 @@ def save_overlay(int_grad,classes,inp_im,name=None,steps = 100, mosaic = 'cols')
 
             if mosaic == 'cols':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * (k + 3):(61 + margin) * (k + 3) + 61,(61 + margin) * i: (61 + margin) * i + 61,:] = im
+                stitched_im[(125 + margin) * (k + 3) + lign:(125 + margin) * (k + 3) + stp + lign,(61 + margin) * i: (61 + margin) * i + 61,:] = im
             elif mosaic == 'rows':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * (i): (61 + margin) * (i) + 61,(61 + margin) * (k + 3):(61 + margin) * (k + 3) + 61,:] = im
+                stitched_im[(125 + margin) * (i) + lign: (125 + margin) * (i) + stp + lign,(61 + margin) * (k + 3):(61 + margin) * (k + 3) + 61,:] = im
             elif mosaic == 'rows2':
                 # Add it to the stitched image
-                stitched_im[(61 + margin) * (2*i + 1): (61 + margin) * (2*i + 1) + 61,(61 + margin) * k:(61 + margin) * k + 61,:] = im
+                stitched_im[(125 + margin) * (2*i + 1) + lign: (125 + margin) * (2*i + 1) + stp + lign,(61 + margin) * k:(61 + margin) * k + 61,:] = im
 
 
     # save the result to disk
